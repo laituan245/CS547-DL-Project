@@ -1,1 +1,1 @@
-# CS547-DL-Project
+# Convolutional Neural Networks for Text Classification
