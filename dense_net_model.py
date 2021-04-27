@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from dataset import *
 
 class BNConv1D(nn.Module):
     def __init__(self, input_dim=300, output_dim=16, kernel_size=3, padding=1, stride=1):

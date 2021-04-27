@@ -35,4 +35,4 @@ class MyDataset(Dataset):
         elif len(data) < self.max_length:
             data += [0] * (self.max_length - len(data))
         label = self.labels[index]
-        return np.array(data, dtype=np.int64), label
+        return np.array(data, dtype=np.float32), label
