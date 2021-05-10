@@ -18,14 +18,15 @@ num_classes = train_dataset.num_classes
 model = VDCNN(num_classes)
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-5)
 
+best_err = 1.0
 for epoch in range(5):
-    """model.train()
+    model.train()
     for idx, (x, y) in enumerate(train_dataloader):
         optimizer.zero_grad()
         logits = model(x.long())
         loss = model.compute_loss(logits, y)
         loss.backward()
-        optimizer.step()"""
+        optimizer.step()
     model.eval()
     err, tot_count = 0, 0
     for idx, (x, y) in enumerate(val_dataloader):
@@ -33,6 +34,9 @@ for epoch in range(5):
         pred_y = torch.argmax(logits, dim=1)
         err += (pred_y != y).sum()
         tot_count += y.size(0)
+        if err/tot_count < best_err:
+            torch.save(model.state_dict(), data_fpath.split("/")[1]+".pt")
+            best_err = err/tot_count
     print("Val err: " + str(err/tot_count))
 err, tot_count = 0, 0
 for idx, (x, y) in enumerate(test_dataloader):
