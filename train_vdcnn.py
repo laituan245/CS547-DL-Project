@@ -1,10 +1,15 @@
 import torch
+import argparse
 from dataset import MyDataset
 from vdcnn_model import VDCNN
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
-data_fpath = "data/yelp_review_polarity_csv/"
+parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--dataset", type=str, default="data/yelp_review_polarity_csv/")
+args = parser.parse_args()
+
+data_fpath = args.dataset
 
 train_dataset = MyDataset(data_fpath+"train.csv")
 train_dataloader = DataLoader(train_dataset, batch_size=64, shuffle=True)
@@ -16,10 +21,10 @@ test_dataloader = DataLoader(test_dataset, batch_size=64)
 num_classes = train_dataset.num_classes
 
 model = VDCNN(num_classes)
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-5)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 best_err = 1.0
-for epoch in range(5):
+for epoch in range(10):
     model.train()
     for idx, (x, y) in enumerate(train_dataloader):
         optimizer.zero_grad()
@@ -27,6 +32,8 @@ for epoch in range(5):
         loss = model.compute_loss(logits, y)
         loss.backward()
         optimizer.step()
+        if idx % 1000 == 0:
+            print("At iter " + str(idx) + " at epoch " + str(epoch))
     model.eval()
     err, tot_count = 0, 0
     for idx, (x, y) in enumerate(val_dataloader):

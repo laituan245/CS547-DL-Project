@@ -15,7 +15,7 @@ class MyDataset(Dataset):
                 for tx in line[1:]:
                     text += tx
                     text += " "
-                label = int(line[0]) - 1
+                label = int(float(line[0])) - 1
                 texts.append(text.lower())
                 labels.append(label)
         self.texts = texts
